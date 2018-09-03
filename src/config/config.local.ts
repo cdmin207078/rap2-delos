@@ -21,8 +21,9 @@ let config: IConfigOptions = {
       min: 0,
       idle: 10000,
     },
-    logging: true,
+    logging: false
   },
+  redis: {}
 }
 
 export default config

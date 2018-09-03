@@ -1,6 +1,7 @@
 // const debug = true
 import * as Koa from 'koa'
-import * as session from 'koa-session'
+import * as session from 'koa-generic-session'
+import * as redisStore from 'koa-redis'
 import * as logger from 'koa-logger'
 import * as serve from 'koa-static'
 import * as body from 'koa-body'
@@ -13,8 +14,10 @@ let appAny: any = app
 appAny.counter = { users: {}, mock: 0 }
 
 app.keys = config.keys
-app.use(session(config.session, app))
-app.use(logger())
+app.use(session({
+  store: redisStore(config.redis)
+}))
+if (process.env.NODE_ENV === 'development' && process.env.TEST_MODE !== 'true') app.use(logger())
 app.use(async(ctx, next) => {
   await next()
   if (ctx.path === '/favicon.ico') return
